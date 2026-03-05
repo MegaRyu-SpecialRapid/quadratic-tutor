@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>二次関数チューター</title>
+<style>
+  body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; margin: 24px; }
+  #chat { border:1px solid #ddd; padding:12px; height:360px; overflow:auto; margin-bottom:12px; }
+  .user { color:#1565c0; margin:8px 0; }
+  .bot  { color:#2e7d32; margin:8px 0; white-space:pre-wrap; }
+</style>
+</head>
+<body>
+  <h1>二次関数チューター</h1>
+  <div id="chat"></div>
+  <input id="q" placeholder="例: y=2x^2-3x+1 の頂点は？" style="width:70%" />
+  <button id="send">送信</button>
+<script>
+const chat = document.getElementById('chat');
+const q = document.getElementById('q');
+document.getElementById('send').onclick = async () => {
+  const text = q.value.trim(); if (!text) return;
+  chat.innerHTML += `<div class="user">あなた: ${text}</div>`;
+  q.value = ''; 
+  const res = await fetch('/api/solve', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ text })
+  });
+  const data = await res.json();
+  chat.innerHTML += `<div class="bot">ボット:\n${data.answer}</div>`;
+  chat.scrollTop = chat.scrollHeight;
+};
+</script>
+</body>
+</html>
